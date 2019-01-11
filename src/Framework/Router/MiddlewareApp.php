@@ -19,9 +19,9 @@ class MiddlewareApp implements MiddlewareInterface
 
     /**
      * MiddlewareApp constructor.
-     * @param callable $callable
+     * @param string|callable $callable
      */
-    public function __construct(callable $callable)
+    public function __construct($callable)
     {
         $this->callable = $callable;
     }

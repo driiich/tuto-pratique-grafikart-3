@@ -29,10 +29,10 @@ class Router
 
     /**
      * @param string $path
-     * @param callable $callable
+     * @param string|callable $callable
      * @param string $name
      */
-    public function get(string $path, callable $callable, string $name)
+    public function get(string $path, $callable, string $name)
     {
         $this->router->addRoute(new ZendRoute($path, new MiddlewareApp($callable), ['GET'], $name));
     }
@@ -50,6 +50,7 @@ class Router
                 $result->getMatchedParams()
             );
         }
+        return null;
     }
 
     public function generateUri(string $name, array $params): ?string
