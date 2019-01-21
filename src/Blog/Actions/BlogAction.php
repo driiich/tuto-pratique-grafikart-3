@@ -40,12 +40,14 @@ class BlogAction
         if ($request->getAttribute('id')) {
             return $this->show($request);
         }
-        return $this->index();
+        return $this->index($request);
     }
 
-    public function index(): string
+    public function index(Request $request): string
     {
-        $posts = $this->postTable->findPaginated();
+        $params = $request->getQueryParams();
+        // ?? 1    ->   Si p n'est pas défini, 1 est donné par défaut
+        $posts = $this->postTable->findPaginated(12, $params['p'] ?? 1);
 
         return $this->renderer->render('@blog/index', compact('posts'));
     }
