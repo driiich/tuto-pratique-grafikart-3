@@ -1,5 +1,4 @@
 <?php
-
 namespace Framework;
 
 use GuzzleHttp\Psr7\Response;
