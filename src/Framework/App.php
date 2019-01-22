@@ -42,6 +42,13 @@ class App
     public function run(ServerRequestInterface $request): ResponseInterface
     {
         $uri = $request->getUri()->getPath();
+        // Traitement des méthodes de formulaire, en particulier la méthode DELETE non interprétée par les navigateurs
+        $parseBody = $request->getParsedBody();
+        if (array_key_exists('_method', $parseBody) &&
+            in_array($parseBody['_method'], ['DELETE', 'PUT'])
+        ) {
+            $request = $request->withMethod($parseBody['_method']);
+        }
         if (!empty($uri) && $uri[-1] === "/") {
             return (new Response())
                 ->withStatus(301)
