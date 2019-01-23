@@ -16,6 +16,8 @@ class Post
 
     public $updated_at;
 
+    public $category_name;
+
     /**
      * Post constructor.
      */
