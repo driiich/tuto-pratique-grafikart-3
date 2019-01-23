@@ -6,6 +6,7 @@ use Framework\Validator\ValidationError;
 
 class Validator
 {
+
     /**
      * @var array
      */
@@ -16,19 +17,18 @@ class Validator
      */
     private $errors = [];
 
-    /**
-     * Validator constructor.
-     */
     public function __construct(array $params)
     {
         $this->params = $params;
     }
 
     /**
-     * @param string ...$keys
+     * Vérifie que les champs sont présents dans le tableau
+     *
+     * @param string[] ...$keys
      * @return Validator
      */
-    public function required(string ...$keys)
+    public function required(string ...$keys): self
     {
         foreach ($keys as $key) {
             $value = $this->getValue($key);
@@ -40,6 +40,8 @@ class Validator
     }
 
     /**
+     * Vérifie que le champs n'est pas vide
+     *
      * @param string[] ...$keys
      * @return Validator
      */
@@ -54,24 +56,11 @@ class Validator
         return $this;
     }
 
-    public function isValid(): bool
-    {
-        return empty($this->errors);
-    }
-
-    /**
-     * @return ValidationError[]
-     */
-    public function getErrors(): array
-    {
-        return $this->errors;
-    }
-
     public function length(string $key, ?int $min, ?int $max = null): self
     {
         $value = $this->getValue($key);
         $length = mb_strlen($value);
-        if (is_null($min) &&
+        if (!is_null($min) &&
             !is_null($max) &&
             ($length < $min || $length > $max)
         ) {
@@ -85,17 +74,23 @@ class Validator
             return $this;
         }
         if (!is_null($max) &&
-            $length < $max
+            $length > $max
         ) {
             $this->addError($key, 'maxLength', [$max]);
         }
         return $this;
     }
 
+    /**
+     * Vérifie que l'élément est un slug
+     *
+     * @param string $key
+     * @return Validator
+     */
     public function slug(string $key): self
     {
         $value = $this->getValue($key);
-        $pattern = '/^([a-z0-9]+-?)+$/';
+        $pattern = '/^[a-z0-9]+(-[a-z0-9]+)*$/';
         if (!is_null($value) && !preg_match($pattern, $value)) {
             $this->addError($key, 'slug');
         }
@@ -113,9 +108,26 @@ class Validator
         return $this;
     }
 
+    public function isValid(): bool
+    {
+        return empty($this->errors);
+    }
+
     /**
+     * Récupère les erreurs
+     * @return ValidationError[]
+     */
+    public function getErrors(): array
+    {
+        return $this->errors;
+    }
+
+    /**
+     * Ajoute une erreur
+     *
      * @param string $key
      * @param string $rule
+     * @param array $attributes
      */
     private function addError(string $key, string $rule, array $attributes = []): void
     {
