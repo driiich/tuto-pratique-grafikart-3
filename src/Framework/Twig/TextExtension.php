@@ -26,7 +26,7 @@ class TextExtension extends \Twig_Extension
      * @param int $maxLength
      * @return string
      */
-    public function excerpt(string $content, int $maxLength = 100): string
+    public function excerpt(?string $content, int $maxLength = 100): string
     {
         if (mb_strlen($content) > $maxLength) {
             $excerpt = mb_substr($content, 0, $maxLength);

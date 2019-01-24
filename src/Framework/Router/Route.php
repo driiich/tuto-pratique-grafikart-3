@@ -1,31 +1,27 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Cyril
- * Date: 04/01/2019
- * Time: 17:07
- */
-
 namespace Framework\Router;
 
 /**
  * Class Route
- * Represent a matched Route
+ * Represent a matched route
  */
 class Route
 {
+
     /**
      * @var string
      */
     private $name;
-    /**
-     * @var array
-     */
-    private $parameters;
+
     /**
      * @var callable
      */
     private $callback;
+
+    /**
+     * @var array
+     */
+    private $parameters;
 
     /**
      * Route constructor.
@@ -35,10 +31,9 @@ class Route
      */
     public function __construct(string $name, $callback, array $parameters)
     {
-
         $this->name = $name;
-        $this->parameters = $parameters;
         $this->callback = $callback;
+        $this->parameters = $parameters;
     }
 
     /**
@@ -58,7 +53,8 @@ class Route
     }
 
     /**
-     * @return array
+     * Retrieve the URL parameters
+     * @return string[]
      */
     public function getParams(): array
     {

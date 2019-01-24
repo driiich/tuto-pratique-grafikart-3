@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: Cyril
- * Date: 04/01/2019
- * Time: 17:03
- */
 
 namespace Framework;
 
@@ -15,11 +9,13 @@ use Zend\Expressive\Router\FastRouteRouter;
 use Zend\Expressive\Router\Route as ZendRoute;
 
 /**
- * Class Router
- * @package Framework
+ * Register and match routes
  */
 class Router
 {
+    /**
+     * @var FastRouteRouter
+     */
     private $router;
 
     public function __construct()
@@ -58,6 +54,8 @@ class Router
     }
 
     /**
+     * Génère les route du CRUD
+     *
      * @param string $prefixPath
      * @param $callable
      * @param string $prefixName

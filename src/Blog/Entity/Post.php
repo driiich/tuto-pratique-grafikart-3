@@ -1,9 +1,9 @@
 <?php
-
 namespace App\Blog\Entity;
 
 class Post
 {
+
     public $id;
 
     public $name;
@@ -18,9 +18,6 @@ class Post
 
     public $category_name;
 
-    /**
-     * Post constructor.
-     */
     public function __construct()
     {
         if ($this->created_at) {

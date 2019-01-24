@@ -98,6 +98,13 @@ class Validator
         return $this;
     }
 
+    /**
+     * Vérifie qu'une date correspond au format demandé
+     *
+     * @param string $key
+     * @param string $format
+     * @return Validator
+     */
     public function dateTime(string $key, string $format = "Y-m-d H:i:s"): self
     {
         $value = $this->getValue($key);
@@ -109,6 +116,54 @@ class Validator
         return $this;
     }
 
+    /**
+     * Vérifie que la clef existe dans la table donnée
+     *
+     * @param string $key
+     * @param string $table
+     * @param \PDO $pdo
+     * @return Validator
+     */
+    public function exists(string $key, string $table, \PDO $pdo): self
+    {
+        $value = $this->getValue($key);
+        $statement = $pdo->prepare("SELECT id FROM $table WHERE id = ?");
+        $statement->execute([$value]);
+        if ($statement->fetchColumn() === false) {
+            $this->addError($key, 'exists', [$table]);
+        }
+        return $this;
+    }
+
+    /**
+     * Vérifie que la clef est unique dans la base de donnée
+     *
+     * @param string $key
+     * @param string $table
+     * @param \PDO $pdo
+     * @param int|null $exclude
+     * @return Validator
+     */
+    public function unique(string $key, string $table, \PDO $pdo, ?int $exclude = null): self
+    {
+        $value = $this->getValue($key);
+        $query = "SELECT id FROM $table WHERE $key = ?";
+        $params = [$value];
+        if ($exclude !== null) {
+            $query .= " AND id != ?";
+            $params[] = $exclude;
+        }
+        $statement = $pdo->prepare($query);
+        $statement->execute($params);
+        if ($statement->fetchColumn() !== false) {
+            $this->addError($key, 'unique', [$value]);
+        }
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
     public function isValid(): bool
     {
         return empty($this->errors);
@@ -141,16 +196,5 @@ class Validator
             return $this->params[$key];
         }
         return null;
-    }
-
-    public function exists(string $key, string $table, \PDO $pdo): self
-    {
-        $value = $this->getValue($key);
-        $statement = $pdo->prepare("SELECT id FROM $table WHERE id = ?");
-        $statement->execute([$value]);
-        if ($statement->fetchColumn() === false) {
-            $this->addError($key, 'exists', [$table]);
-        }
-        return $this;
     }
 }
