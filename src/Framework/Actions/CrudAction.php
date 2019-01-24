@@ -89,7 +89,6 @@ class CrudAction
     {
         $params = $request->getQueryParams();
         $items = $this->table->findPaginated(12, $params['p'] ?? 1);
-
         return $this->renderer->render($this->viewPath . '/index', compact('items'));
     }
 
