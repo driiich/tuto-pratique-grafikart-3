@@ -25,7 +25,7 @@ class RouterMiddleware
 
     public function __invoke(ServerRequestInterface $request, callable $next)
     {
-        # Trouve la route correspondant à la requête
+        # Trouve la route correspondante à la requête
         $route = $this->router->match($request);
         if (is_null($route)) {
             return $next($request);
@@ -35,6 +35,7 @@ class RouterMiddleware
             return $request->withAttribute($key, $params[$key]);
         }, $request);
         $request = $request->withAttribute(get_class($route), $route);
+        # Retourne la requête contenant la route trouvée ($route = nom + callback + paramètres)
         return $next($request);
     }
 }

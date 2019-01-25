@@ -1,6 +1,9 @@
 <?php
 
+use Framework\Middleware\CsrfMidlleware;
 use Framework\Session\PHPSession;
+use Framework\Session\SessionInterface;
+use Framework\Twig\CsrfExtension;
 use Framework\Twig\FlashExtension;
 use Framework\Twig\FormExtension;
 use Framework\Twig\PagerFantaExtension;
@@ -22,9 +25,11 @@ return [
         \DI\get(TextExtension::class),
         \DI\get(TimeExtension::class),
         \DI\get(FlashExtension::class),
-        \DI\get(FormExtension::class)
+        \DI\get(FormExtension::class),
+        \DI\get(CsrfExtension::class)
     ],
-    \Framework\Session\SessionInterface::class => \DI\autowire(PHPSession::class),
+    SessionInterface::class => \DI\autowire(PHPSession::class),
+    CsrfMidlleware::class => \DI\autowire()->constructor(\DI\get(SessionInterface::class)),
     \Framework\Router::class => \DI\autowire(),
     RendererInterface::class => \DI\factory(TwigRendererFactory::class),
     PDO::class => function (\Psr\Container\ContainerInterface $c){

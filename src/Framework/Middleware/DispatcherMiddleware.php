@@ -11,10 +11,6 @@ use Psr\Http\Message\ServerRequestInterface;
 class DispatcherMiddleware
 {
     /**
-     * @var Router
-     */
-    private $router;
-    /**
      * @var ContainerInterface
      */
     private $container;
@@ -45,8 +41,10 @@ class DispatcherMiddleware
         if (is_string($callback)) {
             $callback = $this->container->get($callback);
         }
-        # Envoi la réponse
+        # Exécute le callback (PostCrudAction par exemple avec méthode __invoke) précédemment stocké dans la variable Request par le Router
+        # et renvoi la vue avec les paramètres, envoyée à présent dans la Response
         $response = call_user_func_array($callback, [$request]);
+
         if (is_string($response)) {
             return new Response(200, [], $response);
         } elseif ($response instanceof ResponseInterface) {
