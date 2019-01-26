@@ -1,4 +1,5 @@
 <?php
+
 namespace Framework\Database;
 
 class Query
@@ -7,7 +8,9 @@ class Query
 
     private $from;
 
-    private $where;
+    private $where = [];
+
+    private $entity = null;
 
     private $group;
 
@@ -28,6 +31,11 @@ class Query
         $this->pdo = $pdo;
     }
 
+    /**
+     * @param string $table
+     * @param null|string $alias
+     * @return Query
+     */
     public function from(string $table, ?string $alias = null): self
     {
         if ($alias) {
@@ -48,18 +56,28 @@ class Query
         return $this;
     }
 
+    /**
+     * @param string ...$condition
+     * @return Query
+     */
     public function where(string ...$condition): self
     {
         $this->where = $condition;
         return $this;
     }
 
+    /**
+     * @return int
+     */
     public function count(): int
     {
         $this->select("COUNT(id)");
         return $this->execute()->fetchColumn();
     }
 
+    /**
+     * @return string
+     */
     private function buildFrom(): string
     {
         $from = [];
@@ -73,12 +91,40 @@ class Query
         return join(', ', $from);
     }
 
+    /**
+     * @param array $params
+     * @return Query
+     */
     public function params(array $params): self
     {
         $this->params = $params;
         return $this;
     }
 
+    /**
+     * @param string $entity
+     * @return Query
+     */
+    public function into(string $entity): self
+    {
+        $this->entity = $entity;
+        return $this;
+    }
+
+    /**
+     * @return QueryResult
+     */
+    public function all(): QueryResult
+    {
+        return new QueryResult(
+            $this->execute()->fetchAll(\PDO::FETCH_ASSOC),
+            $this->entity
+        );
+    }
+
+    /**
+     * @return string
+     */
     public function __toString()
     {
         $parts[] = 'SELECT';
@@ -96,6 +142,9 @@ class Query
         return join(' ', $parts);
     }
 
+    /**
+     * @return bool|\PDOStatement
+     */
     private function execute()
     {
         $query = $this->__toString();
