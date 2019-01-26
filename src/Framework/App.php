@@ -2,6 +2,8 @@
 
 namespace Framework;
 
+use Doctrine\Common\Cache\ApcuCache;
+use Doctrine\Common\Cache\FilesystemCache;
 use GuzzleHttp\Psr7\Response;
 use GuzzleHttp\Psr7\ServerRequest;
 use Interop\Http\ServerMiddleware\DelegateInterface;
@@ -108,6 +110,11 @@ class App implements DelegateInterface
     {
         if ($this->container === null) {
             $builder = new \DI\ContainerBuilder();
+            $env = $_ENV['ENV'];
+            if ($env === 'production') {
+                $builder->setDefinitionCache(new FilesystemCache('tmp/di'));
+                $builder->writeProxiesToFile(true, 'tmp/proxies');
+            }
             $builder->addDefinitions($this->definition);
             foreach ($this->modules as $module) {
                 if ($module::DEFINITIONS) {

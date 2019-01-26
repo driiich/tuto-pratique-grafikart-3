@@ -1,6 +1,7 @@
 <?php
 
 use Framework\Middleware\CsrfMidlleware;
+use Framework\Router\RouterFactory;
 use Framework\Session\PHPSession;
 use Framework\Session\SessionInterface;
 use Framework\Twig\CsrfExtension;
@@ -14,6 +15,7 @@ use Framework\Twig\TextExtension;
 use Framework\Twig\TimeExtension;
 
 return [
+    'env' =>  \DI\env('ENV', 'production'),
     'database.host' => 'localhost',
     'database.username' => 'root',
     'database.password' => 'root',
@@ -28,9 +30,9 @@ return [
         \DI\get(FormExtension::class),
         \DI\get(CsrfExtension::class)
     ],
-    SessionInterface::class => \DI\autowire(PHPSession::class),
-    CsrfMidlleware::class => \DI\autowire()->constructor(\DI\get(SessionInterface::class)),
-    \Framework\Router::class => \DI\autowire(),
+    SessionInterface::class => \DI\object(PHPSession::class),
+    CsrfMidlleware::class => \DI\object()->constructor(\DI\get(SessionInterface::class)),
+    \Framework\Router::class => \DI\Factory(RouterFactory::class),
     RendererInterface::class => \DI\factory(TwigRendererFactory::class),
     PDO::class => function (\Psr\Container\ContainerInterface $c){
         return new PDO(

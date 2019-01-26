@@ -22,7 +22,7 @@ class CsrfExtension extends \Twig_Extension
     public function getFunctions(): array
     {
         return [
-            new \Twig_SimpleFunction('csrf_input', [$this, 'csrfInput'], ['is_safe' => 'html'])
+            new \Twig_SimpleFunction('csrf_input', [$this, 'csrfInput'], ['is_safe' => ['html']])
         ];
     }
 
