@@ -1,8 +1,10 @@
 <?php
+
 namespace Framework\Session;
 
 class FlashService
 {
+
     /**
      * @var SessionInterface
      */
@@ -12,9 +14,6 @@ class FlashService
 
     private $messages;
 
-    /**
-     * FlashService constructor.
-     */
     public function __construct(SessionInterface $session)
     {
         $this->session = $session;
@@ -40,10 +39,8 @@ class FlashService
             $this->messages = $this->session->get($this->sessionKey, []);
             $this->session->delete($this->sessionKey);
         }
-        if (isset($this->messages)) {
-            if (array_key_exists($type, $this->messages)) {
-                return $this->messages[$type];
-            }
+        if (array_key_exists($type, $this->messages)) {
+            return $this->messages[$type];
         }
         return null;
     }

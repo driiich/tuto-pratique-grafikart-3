@@ -3,13 +3,8 @@ namespace Framework\Validator;
 
 class ValidationError
 {
-    /**
-     * @var string
-     */
+
     private $key;
-    /**
-     * @var string
-     */
     private $rule;
 
     private $messages = [
@@ -20,20 +15,16 @@ class ValidationError
         'maxLength' => 'Le champs %s doit contenir moins de %d caractères',
         'betweenLength' => 'Le champs %s doit contenir entre %d et %d caractères',
         'datetime' => 'Le champs %s doit être une date valide (%s)',
-        'exists' => 'Le champs %s n\'existe pas dans la table %s',
-        'unique' => 'Le champs %s doit être unique'
+        'exists' => 'Le champs %s n\'existe pas sur dans la table %s',
+        'unique' => 'Le champs %s doit être unique',
+        'filetype' => 'Le champs %s n\'est pas au format valide (%s)',
+        'uploaded' => 'Vous devez uploader un fichier'
     ];
     /**
      * @var array
      */
     private $attributes;
 
-    /**
-     * ValidationError constructor.
-     * @param string $key
-     * @param string $rule
-     * @param array $attributes
-     */
     public function __construct(string $key, string $rule, array $attributes = [])
     {
         $this->key = $key;

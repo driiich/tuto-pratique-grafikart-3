@@ -39,7 +39,7 @@ class PagerFantaExtension extends \Twig_Extension
         array $routerParams = [],
         array $queryArgs = []
     ): string {
-
+    
         $view = new TwitterBootstrap4View();
         return $view->render($paginatedResults, function (int $page) use ($route, $routerParams, $queryArgs) {
             if ($page > 1) {

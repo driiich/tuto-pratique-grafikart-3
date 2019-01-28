@@ -2,10 +2,9 @@
 
 namespace Framework;
 
+use DI\ContainerBuilder;
 use Doctrine\Common\Cache\ApcuCache;
 use Doctrine\Common\Cache\FilesystemCache;
-use GuzzleHttp\Psr7\Response;
-use GuzzleHttp\Psr7\ServerRequest;
 use Interop\Http\ServerMiddleware\DelegateInterface;
 use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Container\ContainerInterface;
@@ -40,16 +39,15 @@ class App implements DelegateInterface
      */
     private $index = 0;
 
-    /**
-     * App constructor.
-     * @param string $definition
-     */
     public function __construct(string $definition)
     {
+
         $this->definition = $definition;
     }
 
     /**
+     * Rajoute un module à l'application
+     *
      * @param string $module
      * @return App
      */
@@ -60,20 +58,17 @@ class App implements DelegateInterface
     }
 
     /**
+     * Ajoute un middleware
+     *
      * @param string $middleware
-     * @return $this
+     * @return App
      */
-    public function pipe(string $middleware)
+    public function pipe(string $middleware): self
     {
         $this->middlewares[] = $middleware;
         return $this;
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws \Exception
-     */
     public function process(ServerRequestInterface $request): ResponseInterface
     {
         $middleware = $this->getMiddleware();
@@ -84,34 +79,25 @@ class App implements DelegateInterface
         } elseif ($middleware instanceof MiddlewareInterface) {
             return $middleware->process($request, $this);
         }
-        return call_user_func_array($middleware, [$request, [$this, 'process']]);
     }
 
-    /**
-     * @param ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws \Exception
-     */
     public function run(ServerRequestInterface $request): ResponseInterface
     {
-        # Initialise les modules
         foreach ($this->modules as $module) {
             $this->getContainer()->get($module);
         }
-        # Lance les middlewares
         return $this->process($request);
     }
 
     /**
      * @return ContainerInterface
-     * @throws \Exception
      */
     public function getContainer(): ContainerInterface
     {
         if ($this->container === null) {
-            $builder = new \DI\ContainerBuilder();
-            $env = $_ENV['ENV'];
-            if ($env === 'production') {
+            $builder = new ContainerBuilder();
+            $env = getenv('ENV') ?: 'production';
+            if ($_ENV['env'] === 'production') {
                 $builder->setDefinitionCache(new FilesystemCache('tmp/di'));
                 $builder->writeProxiesToFile(true, 'tmp/proxies');
             }
@@ -126,6 +112,9 @@ class App implements DelegateInterface
         return $this->container;
     }
 
+    /**
+     * @return object
+     */
     private function getMiddleware()
     {
         if (array_key_exists($this->index, $this->middlewares)) {

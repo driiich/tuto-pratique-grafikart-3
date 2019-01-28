@@ -1,24 +1,32 @@
 <?php
 namespace Framework\Database;
 
+/**
+ * Représente les résultats d'une requête
+ */
 class QueryResult implements \ArrayAccess, \Iterator
 {
+
     /**
-     * @var array
+     * @var array Les enregistrements
      */
     private $records;
 
+    /**
+     * @var null|string Entité à utiliser pour hydrater nos objets
+     */
     private $entity;
 
+    /**
+     * @var int Index servant à l'itération
+     */
     private $index = 0;
 
+    /**
+     * @var array Sauvegarde les enregistrements déjà hydratés
+     */
     private $hydratedRecords = [];
 
-    /**
-     * QueryResult constructor.
-     * @param array $records
-     * @param null|string $entity
-     */
     public function __construct(array $records, ?string $entity = null)
     {
         $this->records = $records;
@@ -26,6 +34,7 @@ class QueryResult implements \ArrayAccess, \Iterator
     }
 
     /**
+     * Récupère un éléments à l'index définit
      * @param int $index
      * @return mixed|null|string
      */
@@ -57,7 +66,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      * @return void Any returned value is ignored.
      * @since 5.0.0
      */
-    public function next()
+    public function next(): void
     {
         $this->index++;
     }
@@ -82,7 +91,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      */
     public function valid()
     {
-        return isset($this->$records[$this->index]);
+        return isset($this->records[$this->index]);
     }
 
     /**
@@ -142,7 +151,7 @@ class QueryResult implements \ArrayAccess, \Iterator
      */
     public function offsetSet($offset, $value)
     {
-        throw new \Exception("Can't alert records");
+        throw new \Exception("Can't alter records");
     }
 
     /**
@@ -157,6 +166,6 @@ class QueryResult implements \ArrayAccess, \Iterator
      */
     public function offsetUnset($offset)
     {
-        throw new \Exception("Can't alert records");
+        throw new \Exception("Can't alter records");
     }
 }

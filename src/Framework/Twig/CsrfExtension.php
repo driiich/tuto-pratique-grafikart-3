@@ -1,25 +1,22 @@
 <?php
 namespace Framework\Twig;
 
-use Framework\Middleware\CsrfMidlleware;
+use Framework\Middleware\CsrfMiddleware;
 
 class CsrfExtension extends \Twig_Extension
 {
-    /**
-     * @var CsrfMidlleware
-     */
-    private $csrfMidlleware;
 
     /**
-     * CsrfExtension constructor.
-     * @param CsrfMidlleware $csrfMidlleware
+     * @var CsrfMiddleware
      */
-    public function __construct(CsrfMidlleware $csrfMidlleware)
+    private $csrfMiddleware;
+
+    public function __construct(CsrfMiddleware $csrfMiddleware)
     {
-        $this->csrfMidlleware = $csrfMidlleware;
+        $this->csrfMiddleware = $csrfMiddleware;
     }
 
-    public function getFunctions(): array
+    public function getFunctions()
     {
         return [
             new \Twig_SimpleFunction('csrf_input', [$this, 'csrfInput'], ['is_safe' => ['html']])
@@ -29,7 +26,7 @@ class CsrfExtension extends \Twig_Extension
     public function csrfInput()
     {
         return '<input type="hidden" ' .
-        'name="' . $this->csrfMidlleware->getFormKey().'"'.
-        'value="' . $this->csrfMidlleware->generateToken() . '"/>';
+            'name="' . $this->csrfMiddleware->getFormKey() . '" ' .
+            'value="' . $this->csrfMiddleware->generateToken() . '"/>';
     }
 }

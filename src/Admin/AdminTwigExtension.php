@@ -3,25 +3,21 @@ namespace App\Admin;
 
 class AdminTwigExtension extends \Twig_Extension
 {
+
     /**
      * @var array
      */
     private $widgets;
 
-    /**
-     * AdminTwigExtension constructor.
-     * @param array $widgets
-     */
     public function __construct(array $widgets)
     {
-
         $this->widgets = $widgets;
     }
 
     public function getFunctions(): array
     {
         return [
-            new \Twig_SimpleFunction(('admin_menu'), [$this, 'renderMenu'], ['is_safe' => ['html']])
+            new \Twig_SimpleFunction('admin_menu', [$this, 'renderMenu'], ['is_safe' => ['html']])
         ];
     }
 

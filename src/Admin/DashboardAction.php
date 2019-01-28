@@ -5,20 +5,17 @@ use Framework\Renderer\RendererInterface;
 
 class DashboardAction
 {
+
     /**
      * @var RendererInterface
      */
     private $renderer;
+
     /**
      * @var AdminWidgetInterface[]
      */
     private $widgets;
 
-    /**
-     * DashboardAction constructor.
-     * @param RendererInterface $renderer
-     * @param array $widgets
-     */
     public function __construct(RendererInterface $renderer, array $widgets)
     {
         $this->renderer = $renderer;

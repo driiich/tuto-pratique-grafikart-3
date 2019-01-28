@@ -5,15 +5,12 @@ use Framework\Session\FlashService;
 
 class FlashExtension extends \Twig_Extension
 {
+
     /**
      * @var FlashService
      */
     private $flashService;
 
-    /**
-     * FlashExtension constructor.
-     * @param FlashService $flashService
-     */
     public function __construct(FlashService $flashService)
     {
         $this->flashService = $flashService;

@@ -2,7 +2,6 @@
 
 namespace Framework;
 
-use App\Framework\Router\MiddlewareApp;
 use Framework\Router\Route;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Expressive\Router\FastRouteRouter;
@@ -20,10 +19,13 @@ class Router
 
     public function __construct(?string $cache = null)
     {
+        if ($_ENV['env'] === 'development') {
+            $cache = null;
+        }
         $this->router = new FastRouteRouter(null, null, [
             FastRouteRouter::CONFIG_CACHE_ENABLED => !is_null($cache),
-            FastRouteRouter::CONFIG_CACHE_FILE => $cache
-            ]);
+            FastRouteRouter::CONFIG_CACHE_FILE    => $cache
+        ]);
     }
 
     /**
@@ -33,7 +35,7 @@ class Router
      */
     public function get(string $path, $callable, ?string $name = null)
     {
-        $this->router->addRoute(new ZendRoute($path, new MiddlewareApp($callable), ['GET'], $name));
+        $this->router->addRoute(new ZendRoute($path, $callable, ['GET'], $name));
     }
 
     /**
@@ -43,7 +45,7 @@ class Router
      */
     public function post(string $path, $callable, ?string $name = null)
     {
-        $this->router->addRoute(new ZendRoute($path, new MiddlewareApp($callable), ['POST'], $name));
+        $this->router->addRoute(new ZendRoute($path, $callable, ['POST'], $name));
     }
 
     /**
@@ -53,7 +55,7 @@ class Router
      */
     public function delete(string $path, $callable, ?string $name = null)
     {
-        $this->router->addRoute(new ZendRoute($path, new MiddlewareApp($callable), ['DELETE'], $name));
+        $this->router->addRoute(new ZendRoute($path, $callable, ['DELETE'], $name));
     }
 
     /**
@@ -83,7 +85,7 @@ class Router
         if ($result->isSuccess()) {
             return new Route(
                 $result->getMatchedRouteName(),
-                $result->getMatchedRoute()->getMiddleware()->getCallable(),
+                $result->getMatchedMiddleware(),
                 $result->getMatchedParams()
             );
         }

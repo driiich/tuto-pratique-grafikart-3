@@ -1,9 +1,13 @@
 <?php
+
 namespace Framework\Session;
 
 class PHPSession implements SessionInterface, \ArrayAccess
 {
 
+    /**
+     * Assure que la Session est démarrée
+     */
     private function ensureStarted()
     {
         if (session_status() === PHP_SESSION_NONE) {
@@ -12,6 +16,7 @@ class PHPSession implements SessionInterface, \ArrayAccess
     }
 
     /**
+     * Récupère une information en Session
      * @param string $key
      * @param mixed $default
      * @return mixed
@@ -22,20 +27,24 @@ class PHPSession implements SessionInterface, \ArrayAccess
         if (array_key_exists($key, $_SESSION)) {
             return $_SESSION[$key];
         }
+        return $default;
     }
 
     /**
+     * Ajoute une information en Session
+     *
      * @param string $key
      * @param $value
      * @return mixed
      */
-    public function set(string $key, $value)
+    public function set(string $key, $value): void
     {
         $this->ensureStarted();
         $_SESSION[$key] = $value;
     }
 
     /**
+     * Supprime une clef en session
      * @param string $key
      */
     public function delete(string $key): void
@@ -90,7 +99,7 @@ class PHPSession implements SessionInterface, \ArrayAccess
      */
     public function offsetSet($offset, $value)
     {
-        $this->set($offset, $value);
+        return $this->set($offset, $value);
     }
 
     /**
